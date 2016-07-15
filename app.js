@@ -22,7 +22,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', home);
+// initialize the database, stored in memory
+database = null;
+
+// attach routes
+home.attach(app, database);
 app.use('/channel', channel);
 
 // catch 404 and forward to error handler
