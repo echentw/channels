@@ -1,8 +1,7 @@
 express = require('express')
-router = express.Router()
 
 # GET channel page
-router.get('/:id', (req, res, next) ->
+channel = (req, res, next) ->
   # validate the request
   if !req.session.channelID ||
       !req.session.username ||
@@ -13,6 +12,7 @@ router.get('/:id', (req, res, next) ->
     channelID: req.session.channelID,
     username: req.session.username
   })
-)
 
-module.exports = router
+module.exports.attach = (app, db) ->
+  database = db
+  app.get('/channel/:id', channel)

@@ -1,6 +1,3 @@
-express = require('express')
-router = express.Router()
-
 database = null
 
 # GET home page
@@ -45,7 +42,6 @@ joinChannel = (req, res, next) ->
 # Attach route handlers to the app
 module.exports.attach = (app, db) ->
   database = db
-
   app.get('/', home)
   app.post('/create', createChannel)
   app.post('/join', joinChannel)

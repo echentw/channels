@@ -7,8 +7,8 @@ cookieSession = require('cookie-session')
 bodyParser = require('body-parser')
 fs = require('fs')
 
-home = require('./routes/home')
-channel = require('./routes/channel')
+homeRoutes = require('./routes/http/home')
+channelRoutes = require('./routes/http/channel')
 
 Database = require('./lib/db')
 
@@ -37,8 +37,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 database = new Database()
 
 # attach routes
-home.attach(app, database)
-app.use('/channel', channel)
+homeRoutes.attach(app, database)
+channelRoutes.attach(app, database)
 
 # catch 404 and forward to error handler
 app.use((req, res, next) ->
