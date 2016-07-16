@@ -3,8 +3,16 @@ router = express.Router()
 
 # GET channel page
 router.get('/:id', (req, res, next) ->
-  channelID = req.params['id']
-  res.render('channel')
+  # validate the request
+  if !req.session.channelID ||
+      !req.session.username ||
+      req.session.channelID != req.params['id']
+    req.redirect('/')
+
+  res.render('channel', {
+    channelID: req.session.channelID,
+    username: req.session.username
+  })
 )
 
 module.exports = router
