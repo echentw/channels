@@ -1,28 +1,46 @@
 express = require('express')
 router = express.Router()
 
+database = null
+
 # GET home page
 home = (req, res, next) ->
-  res.render 'home'
+  res.render('home')
   return
 
 # POST create a channel
 createChannel = (req, res, next) ->
-  console.log 'create'
-  res.render 'home'
-  # req.session.regenerate(function(err) {
-  #   if (err) {
-  #     res.redirect('/');
-  #     return;
-  #   }
-  # });
-  return
+  # clear the current session
+  req.session.channelID = null
+  req.session.username = null
+
+  # create new session
+  channelID = database.add()
+  req.session.channelID = channelID
+  req.session.username = req.body['username']
+
+  res.redirect('/channel/' + channelID)
 
 # POST join a channel
 joinChannel = (req, res, next) ->
-  console.log 'join'
-  res.render 'home'
-  return
+  # validate the request
+  if !req.body['channelID'] || !req.body['username']
+    res.redirect('/')
+    return
+
+  # clear the current session
+  req.session.channelID = null
+  req.session.username = null
+
+  # check that the requested channelID exists
+  if !database.find(req.body['channelID'])
+    res.redirect('/')
+    return
+
+  req.session.channelID = req.body['channelID']
+  req.session.username = req.body['username']
+
+  res.redirect('/channel/' + req.session.channelID)
 
 # Attach route handlers to the app
 module.exports.attach = (app, db) ->

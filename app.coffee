@@ -3,10 +3,14 @@ path = require('path')
 favicon = require('serve-favicon')
 logger = require('morgan')
 cookieParser = require('cookie-parser')
+cookieSession = require('cookie-session')
 bodyParser = require('body-parser')
+fs = require('fs')
 
 home = require('./routes/home')
 channel = require('./routes/channel')
+
+Database = require('./lib/db')
 
 app = express()
 
@@ -20,10 +24,17 @@ app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded(extended: false))
 app.use(cookieParser())
+app.use(cookieSession({
+  keys: [
+    fs.readFileSync('keys/key0.txt', 'utf8'),
+    fs.readFileSync('keys/key1.txt', 'utf8'),
+    fs.readFileSync('keys/key2.txt', 'utf8')
+  ]
+}))
 app.use(express.static(path.join(__dirname, 'public')))
 
 # initialize the database, stored in memory
-database = null
+database = new Database()
 
 # attach routes
 home.attach(app, database)
@@ -34,7 +45,6 @@ app.use((req, res, next) ->
   err = new Error('Not Found')
   err.status = 404
   next(err)
-  return
 )
 
 # error handlers
@@ -47,7 +57,6 @@ if app.get('env') == 'development'
       message: err.message
       error: err
     )
-    return
   )
 
 # production error handler
@@ -57,7 +66,7 @@ app.use((err, req, res, next) ->
   res.render('error',
     message: err.message
     error: {}
-  return
+  )
 )
 
 module.exports = app
