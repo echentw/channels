@@ -1,7 +1,7 @@
 # Module dependencies.
-app = require('../app')
+app = require('../app').app
+server = require('../app').server
 debug = require('debug')('channels:server')
-http = require('http')
 
 # Normalize a port into a number, string, or false.
 normalizePort = (val) ->
@@ -18,7 +18,7 @@ normalizePort = (val) ->
   return false
 
 # Get port from environment and store in Express.
-port = normalizePort(process.env.PORT or '3000')
+port = normalizePort(process.env.PORT || '3000')
 
 # Event listener for HTTP server "error" event.
 onError = (error) ->
@@ -41,15 +41,12 @@ onError = (error) ->
 onListening = ->
   addr = server.address()
   bind = if typeof addr == 'string' then 'pipe ' + addr else 'port ' + addr.port
-  debug 'Listening on ' + bind
+  debug('Listening on ' + bind)
   return
 
 app.set('port', port)
 
-# Create HTTP server.
-server = http.createServer(app)
-
 # Listen on provided port, on all network interfaces.
-server.listen port
+server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)

@@ -6,9 +6,12 @@ cookieParser = require('cookie-parser')
 cookieSession = require('cookie-session')
 bodyParser = require('body-parser')
 fs = require('fs')
+socket = require('socket.io')
+http = require('http')
 
 homeRoutes = require('./routes/http/home')
 channelRoutes = require('./routes/http/channel')
+channelSocketRoutes = require('./routes/socket/channel')
 
 Database = require('./lib/db')
 
@@ -33,8 +36,10 @@ app.use(cookieSession({
 }))
 app.use(express.static(path.join(__dirname, 'public')))
 
-# initialize the database, stored in memory
+# initialize the database, server, and socket
 database = new Database()
+server = http.createServer(app)
+io = socket.listen(server)
 
 # attach routes
 homeRoutes.attach(app, database)
@@ -69,4 +74,7 @@ app.use((err, req, res, next) ->
   )
 )
 
-module.exports = app
+module.exports = {
+  app: app,
+  server: server
+}

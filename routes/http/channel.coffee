@@ -1,5 +1,3 @@
-express = require('express')
-
 # GET channel page
 channel = (req, res, next) ->
   # validate the request
