@@ -44,6 +44,16 @@ io = socket.listen(server)
 # attach routes
 homeRoutes.attach(app, database)
 channelRoutes.attach(app, database)
+channelSocketRoutes.attach(io, database)
+
+# authenticate socket connections
+io.use((socket, next) ->
+  handshakeData = socket.request
+
+  # TODO: authenticate handshake data
+
+  next()
+)
 
 # catch 404 and forward to error handler
 app.use((req, res, next) ->
@@ -53,6 +63,7 @@ app.use((req, res, next) ->
 )
 
 # error handlers
+
 # development error handler
 # will print stacktrace
 if app.get('env') == 'development'
