@@ -6,5 +6,10 @@ define(['socket-io'], (io) ->
       @username = username
       @socket = io.connect()
 
+      @socket.emit('join', channelID, username)
+      @socket.on('update', (data) ->
+        console.log data.message
+      )
+
   return Client
 )

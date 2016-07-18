@@ -1,18 +1,24 @@
 io = null
 database = null
 
-join = (channelID) ->
+join = (channelID, username) ->
+  socket = this
+
   channel = database.find(channelID)
   if !channel
-    this.emit('error', {message: 'Authentication failed.'})
+    socket.emit('error', {message: 'Authentication failed.'})
     return
 
-  success = channel.addUser('username')
+  success = channel.addUser(username)
   if !success
-    this.emit('error', {message: 'Username already exists.'})
+    socket.emit('error', {message: 'Username already exists.'})
     return
 
-  io.join(channelID)
+  socket.join(channelID)
+
+  io.sockets.in(channelID).emit('update', {
+    message: username + ' has joined the channel'
+  })
 
 disconnect = ->
 
