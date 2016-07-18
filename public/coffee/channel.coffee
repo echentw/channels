@@ -1,6 +1,10 @@
-$(document).ready ->
-  console.log 'hello world'
+require(['jquery', 'client'], ($, Client) ->
 
-  # socket = io.connect()
+  $(document).ready( ->
 
-  # socket.emit(channelID)
+    channelID = $('#channelID').text()
+    username = $('#username').text()
+
+    client = new Client(channelID, username)
+  )
+)

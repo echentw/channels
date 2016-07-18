@@ -2,9 +2,10 @@
 <html>
   <head>
     <title>Channel</title>
-    <link rel='stylesheet' href='/css/style.css' />
-    <script src="/vendor/js/jquery-3.1.0.min.js"></script>
-    <script data-main="/js/channel" src="/vendor/js/require.js"></script>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script src="/vendor/js/require.js"></script>
+    <script src="/js/requirejs-config.js"></script>
+    <script src="/js/channel.js"></script>
   </head>
   <body>
     <h1>This is the channel page</h1>
@@ -12,5 +13,10 @@
     <p>Username: <%= username %></p>
 
     <h2>Send a message to the server</h2>
+
+    <div hidden>
+      <div id="channelID"><%= channelID %></div>
+      <div id="username"><%= username %></div>
+    </div>
   </body>
 </html>
