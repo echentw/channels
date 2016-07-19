@@ -6,5 +6,9 @@ require(['jquery', 'client'], ($, Client) ->
     username = $('#username').text()
 
     client = new Client(channelID, username)
+
+    $('#ping').click( ->
+      client.ping()
+    )
   )
 )

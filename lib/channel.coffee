@@ -14,7 +14,7 @@ class Channel
       return true
     return false
 
-  hello: ->
-    return 'hello'
+  empty: ->
+    return Object.keys(@users).length == 0
 
 module.exports = Channel

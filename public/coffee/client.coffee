@@ -4,12 +4,21 @@ define(['socket-io'], (io) ->
     constructor: (channelID, username) ->
       @channelID = channelID
       @username = username
-      @socket = io.connect()
+      @socket = getSocket()
+      @socket.emit('join', {channelID: channelID, username: username})
 
-      @socket.emit('join', channelID, username)
-      @socket.on('update', (data) ->
+    ping: =>
+      @socket.emit('hit', {channelID: @channelID, username: @username})
+
+    getSocket = ->
+      socket = io.connect()
+      socket.on('update', (data) ->
         console.log data.message
       )
+      socket.on('error', (data) ->
+        console.log data.message
+      )
+      return socket
 
   return Client
 )

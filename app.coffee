@@ -3,7 +3,8 @@ path = require('path')
 favicon = require('serve-favicon')
 logger = require('morgan')
 cookieParser = require('cookie-parser')
-cookieSession = require('cookie-session')
+expressSession = require('express-session')
+sharedSession = require("express-socket.io-session")
 bodyParser = require('body-parser')
 fs = require('fs')
 socket = require('socket.io')
@@ -12,6 +13,16 @@ http = require('http')
 homeRoutes = require('./routes/http/home')
 channelRoutes = require('./routes/http/channel')
 channelSocketRoutes = require('./routes/socket/channel')
+
+session = expressSession({
+  secret: [
+    fs.readFileSync('keys/key0.txt', 'utf8'),
+    fs.readFileSync('keys/key1.txt', 'utf8'),
+    fs.readFileSync('keys/key2.txt', 'utf8')
+  ],
+  resave: true,
+  saveUninitialized: true
+})
 
 Database = require('./lib/db')
 
@@ -27,13 +38,7 @@ app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded(extended: false))
 app.use(cookieParser())
-app.use(cookieSession({
-  keys: [
-    fs.readFileSync('keys/key0.txt', 'utf8'),
-    fs.readFileSync('keys/key1.txt', 'utf8'),
-    fs.readFileSync('keys/key2.txt', 'utf8')
-  ]
-}))
+app.use(session)
 app.use(express.static(path.join(__dirname, 'public')))
 
 # initialize the database, server, and socket
@@ -46,14 +51,7 @@ homeRoutes.attach(app, database)
 channelRoutes.attach(app, database)
 channelSocketRoutes.attach(io, database)
 
-# authenticate socket connections
-io.use((socket, next) ->
-  handshakeData = socket.request
-
-  # TODO: authenticate handshake data
-
-  next()
-)
+io.use(sharedSession(session, {autoSave:true}))
 
 # catch 404 and forward to error handler
 app.use((req, res, next) ->
