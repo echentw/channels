@@ -16,7 +16,7 @@ class Database
 
   add: =>
     key = generateKey(16)
-    while key of @games
+    while key of @channels
       key = generateKey(16)
 
     @channels[key] = new Channel()
