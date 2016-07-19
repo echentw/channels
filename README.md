@@ -1,3 +1,6 @@
 # Channels
 
-The idea for this project is to create a framework to build web apps which involve channels (or rooms) for groups of users to interact with each other.
+Setup code to build web apps which involve different channels for users to join (e.g. chess, where each channel consists of a chessboard for two players).
+
+## Modules
+NodeJS/Express, Socket.io
