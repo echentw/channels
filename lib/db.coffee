@@ -15,7 +15,10 @@ class Database
     ), EXPIRE_TIME_IN_MILLISECONDS, @channels)
 
   add: =>
-    key = @generateUniqueGameKey(8)
+    key = generateKey(16)
+    while key of @games
+      key = generateKey(16)
+
     @channels[key] = new Channel()
     return key
 
@@ -30,13 +33,10 @@ class Database
       return true
     return false
 
-  generateUniqueGameKey: (keyLength) =>
+  generateKey = (keyLength) =>
     key = ''
     for i in [0...keyLength]
       key += CHARS[Math.floor(Math.random() * CHARS.length)]
-    while key of @channels
-      for i in [0...keyLength]
-        key += CHARS[Math.floor(Math.random() * CHARS.length)]
     return key
 
 module.exports = Database
