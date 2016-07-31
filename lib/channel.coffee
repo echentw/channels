@@ -20,18 +20,23 @@ class Channel
       return true
     return false
 
-  connectSocket: (username) =>
-    if username of @users
-      if username of @disconnectedUsers
-        delete @disconnectedUsers[username]
-
+  # maintain a more stable connection
+  # remove the user from the channel after 1.5 seconds,
+  # if user has not reconnected within that time
   setTimeout: (username) =>
     if username of @users
       @disconnectedUsers[username] = true
       setTimeout( =>
         if @disconnectedUsers[username]
           @removeUser(username)
-      , 2000)
+      , 1500)
+
+  # maintain a more stable connection
+  # add the user back in if the user reconnects within 1.5 seconds
+  connectSocket: (username) =>
+    if username of @users
+      if username of @disconnectedUsers
+        delete @disconnectedUsers[username]
 
   empty: ->
     return Object.keys(@users).length == 0

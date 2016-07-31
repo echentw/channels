@@ -8,12 +8,10 @@ join = (data) ->
   username = data.username
 
   if socket.handshake.session.channelID != channelID
-    socket.emit('error', {message: 'Authentication failed.'})
     return
 
   channel = database.find(channelID)
   if !channel
-    socket.emit('error', {message: 'The channel does not exist.'})
     return
 
   socket.join(channelID)
@@ -32,7 +30,6 @@ disconnect = ->
     return
 
   channel.setTimeout(session.username)
-
   setTimeout( ->
     channel = database.find(session.channelID)
     if !channel
@@ -41,7 +38,7 @@ disconnect = ->
       message = session.username + ' left channel ' + session.channelID
       io.sockets.in(session.channelID).emit('update', {message: message})
       console.log message
-  , 2500)
+  , 2000)
 
 hit = (data) ->
   socket = this
@@ -49,7 +46,6 @@ hit = (data) ->
 
   if session.channelID != data.channelID ||
       session.username != data.username
-    socket.emit('error', {message: 'Authentication failed.'})
     return
 
   message = session.username + ' pinged channel ' + session.channelID
