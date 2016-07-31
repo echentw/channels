@@ -16,17 +16,12 @@ join = (data) ->
     socket.emit('error', {message: 'The channel does not exist.'})
     return
 
-  success = channel.addUser(username)
-  if !success
-    socket.emit('error', {message: 'Username already exists.'})
-    return
-
   socket.join(channelID)
+  channel.connectSocket(username)
 
   message = username + ' joined channel ' + channelID
   io.sockets.in(channelID).emit('update', {message: message})
   console.log message
-
 
 disconnect = ->
   socket = this
@@ -36,16 +31,17 @@ disconnect = ->
   if !channel
     return
 
-  channel.removeUser(session.username)
+  channel.setTimeout(session.username)
 
-  message = session.username + ' left channel ' + session.channelID
-  console.log channel.empty()
-  if channel.empty()
-    database.delete(session.channelID)
-  else
-    io.sockets.in(session.channelID).emit('update', {message: message})
-
-  console.log message
+  setTimeout( ->
+    channel = database.find(session.channelID)
+    if !channel
+      return
+    if !channel.findUser(session.username)
+      message = session.username + ' left channel ' + session.channelID
+      io.sockets.in(session.channelID).emit('update', {message: message})
+      console.log message
+  , 2500)
 
 hit = (data) ->
   socket = this
