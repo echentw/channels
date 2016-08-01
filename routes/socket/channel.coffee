@@ -25,19 +25,25 @@ disconnect = ->
   socket = this
   session = socket.handshake.session
 
-  channel = database.find(session.channelID)
+  channelID = session.channelID
+  username = session.username
+
+  channel = database.find(channelID)
   if !channel
     return
 
-  channel.setTimeout(session.username)
+  channel.setTimeout(username)
   setTimeout( ->
-    channel = database.find(session.channelID)
+    channel = database.find(channelID)
     if !channel
       return
-    if !channel.findUser(session.username)
-      message = session.username + ' left channel ' + session.channelID
-      io.sockets.in(session.channelID).emit('update', {message: message})
+    if !channel.findUser(username)
+      message = username + ' left channel ' + channelID
+      io.sockets.in(channelID).emit('update', {message: message})
       console.log message
+
+    if channel.empty()
+      database.delete(channelID)
   , 2000)
 
 hit = (data) ->
